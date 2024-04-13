@@ -7,7 +7,7 @@ import org.junit.jupiter.api.Test;
 import java.util.HashMap;
 import java.util.Map;
 
-public class helloWorldTest {
+public class HelloWorldTests {
     @Test
     public void testHello()
     {
