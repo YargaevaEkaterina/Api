@@ -6,7 +6,7 @@ import org.junit.jupiter.api.Test;
 import java.util.HashMap;
 import java.util.Map;
 
-public class HomeworkTests {
+public class homeworkTests {
 
     //Ex4: GET-запрос
     @Test
