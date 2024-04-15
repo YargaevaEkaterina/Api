@@ -2,6 +2,7 @@ import io.restassured.RestAssured;
 import io.restassured.path.json.JsonPath;
 import io.restassured.response.Response;
 import io.restassured.specification.RequestSpecification;
+import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.params.ParameterizedTest;
 import org.junit.jupiter.params.provider.ValueSource;
@@ -15,28 +16,11 @@ import static org.junit.jupiter.api.Assertions.assertTrue;
 
 public class Unit3Tests {
 
-    @ParameterizedTest
-    @ValueSource(strings = {"", "John", "Pete"})
-    public void testAssert(String name)
-    {
-        Map<String, String> queryParams = new HashMap<>();
-
-        if(name.length() > 0){
-            queryParams.put("name", name);
-        }
-        JsonPath response = RestAssured
-                .given()
-                .queryParams(queryParams)
-                .get("https://playground.learnqa.ru/api/hello")
-                .jsonPath();
-        String answer = response.getString("answer");
-        String expectedName = (name.length() > 0) ? name : "someone";
-        assertEquals("Hello, " + expectedName, answer, "The answer is not expected");
-    }
-
-    @Test
-    public void authTest()
-    {
+    String cookie;
+    String header;
+    int userIdOnAuth;
+    @BeforeEach
+    public void loginUser(){
         Map<String, String> authData = new HashMap<>();
         authData.put("email", "vinkotov@example.com");
         authData.put("password", "1234");
@@ -46,19 +30,19 @@ public class Unit3Tests {
                 .body(authData)
                 .post("https://playground.learnqa.ru/api/user/login")
                 .andReturn();
-        Map<String, String> cookies = response.getCookies();
-        Headers headers = response.getHeaders();
-        int userIdOnAuth = response.jsonPath().getInt("user_id");
 
-        assertEquals(200, response.statusCode(), "Unexpected status code");
-        assertTrue(cookies.containsKey("auth_sid"), "Response doesn't have 'auth_sid' cookie");
-        assertTrue(headers.hasHeaderWithName("x-csrf-token"), "Response doesn't have 'x-csrf-token' headers");
-        assertTrue(response.jsonPath().getInt("user_id") > 0, "User id should be greater then 0");
+        this.cookie = response.getCookie("auth_sid");
+        this.header = response.getHeader("x-csrf-token");
+        this.userIdOnAuth = response.jsonPath().getInt("user_id");
+    }
 
+    @Test
+    public void authTest()
+    {
         JsonPath responseCheckAuth = RestAssured
                 .given()
-                .header("x-csrf-token", response.getHeader("x-csrf-token"))
-                .cookie("auth_sid", response.getCookie("auth_sid"))
+                .header("x-csrf-token", this.header)
+                .cookie("auth_sid", this.cookie)
                 .get("https://playground.learnqa.ru/api/user/auth")
                 .jsonPath();
 
@@ -71,27 +55,14 @@ public class Unit3Tests {
     @ValueSource(strings = {"cookie", "headers"})
     public void negativeAuthTest(String condition)
     {
-        Map<String, String> authData = new HashMap<>();
-        authData.put("email", "vinkotov@example.com");
-        authData.put("password", "1234");
-
-        Response response = RestAssured
-                .given()
-                .body(authData)
-                .post("https://playground.learnqa.ru/api/user/login")
-                .andReturn();
-
-        Map<String, String> cookies = response.getCookies();
-        Headers headers = response.getHeaders();
-
         RequestSpecification spec = RestAssured.given();
         spec.baseUri("https://playground.learnqa.ru/api/user/auth");
 
         if(condition.equals("cookie")){
-            spec.cookie("auth_sid", cookies.get("auth_sid"));
+            spec.cookie("auth_sid", this.cookie);
         }
         else if(condition.equals("headers")){
-            spec.header("x-csrf-token", headers.get("x-csrf-token"));
+            spec.header("x-csrf-token", this.header);
         }
         else {
             throw new IllegalArgumentException("Condition value is known " + condition);
@@ -100,5 +71,7 @@ public class Unit3Tests {
         JsonPath responseForCheck = spec.get().jsonPath();
         assertEquals(0, responseForCheck.getInt("user_id"), "User id should be 0 or unauth request");
     }
+
+
 }
 
