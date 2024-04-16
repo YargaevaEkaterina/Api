@@ -268,8 +268,20 @@ public class homeworkTests extends BaseTestCase {
         Response response = RestAssured
                 .get("https://playground.learnqa.ru/api/homework_cookie")
                 .andReturn();
-        response.prettyPrint();
 
-        assertEquals(value, this.getCookie(response,name), "Actual cookie doesn't equals expected cookie");
+        assertEquals(value, this.getCookie(response, name), "Actual cookie doesn't equals expected cookie");
+    }
+
+    //Ex12: Тест запроса на метод header
+    @Test
+    public void headerTest(){
+        String name = "x-secret-homework-header";
+        String value = "Some secret value";
+
+        Response response = RestAssured
+                .get("https://playground.learnqa.ru/api/homework_header")
+                .andReturn();
+
+        assertEquals(value, this.getHeader(response, name), "Actual header doesn't equals expected header");
     }
 }
