@@ -3,6 +3,8 @@ package tests;
 import io.restassured.RestAssured;
 import io.restassured.path.json.JsonPath;
 import io.restassured.response.Response;
+import lib.Assertions;
+import lib.BaseTestCase;
 import org.junit.jupiter.api.Test;
 
 import java.util.HashMap;
@@ -10,10 +12,11 @@ import java.util.Map;
 import java.util.Objects;
 
 import static java.lang.Thread.sleep;
+import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertTrue;
 
 
-public class homeworkTests {
+public class homeworkTests extends BaseTestCase {
 
     //Ex4: GET-запрос
     @Test
@@ -256,4 +259,17 @@ public class homeworkTests {
     }
 
 
+    //Ex11: Тест запроса на метод cookie
+    @Test
+    public void cookieTest(){
+        String name = "HomeWork";
+        String value = "hw_value";
+
+        Response response = RestAssured
+                .get("https://playground.learnqa.ru/api/homework_cookie")
+                .andReturn();
+        response.prettyPrint();
+
+        assertEquals(value, this.getCookie(response,name), "Actual cookie doesn't equals expected cookie");
+    }
 }
