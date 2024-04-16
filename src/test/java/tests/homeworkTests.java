@@ -10,6 +10,7 @@ import java.util.Map;
 import java.util.Objects;
 
 import static java.lang.Thread.sleep;
+import static org.junit.jupiter.api.Assertions.assertTrue;
 
 
 public class homeworkTests {
@@ -243,4 +244,16 @@ public class homeworkTests {
             System.out.println("Status is INCORRECT and equals: " + status);
         }
     }
+
+    //Ex10: Тест на короткую фразу
+    @Test
+    public void checkStringLengthTest()
+    {
+        String text = "1234567890123456";
+        int textLength = text.length();
+
+        assertTrue(textLength > 15, "The text length should be more than 15 symbols. Actual text length is " + textLength);
+    }
+
+
 }
