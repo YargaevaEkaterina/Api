@@ -3,6 +3,7 @@ package tests;
 import io.restassured.RestAssured;
 import io.restassured.path.json.JsonPath;
 import io.restassured.response.Response;
+import lib.Assertions;
 import lib.BaseTestCase;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.params.ParameterizedTest;
@@ -14,8 +15,6 @@ import java.util.Map;
 import java.util.Objects;
 import java.util.stream.Stream;
 
-import static java.lang.Thread.sleep;
-import static lib.Assertions.asserJsonByName;
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertTrue;
 
@@ -302,9 +301,9 @@ public class homeworkTests extends BaseTestCase {
                 .andReturn();
         response.prettyPrint();
 
-        asserJsonByName(response, "platform", platform);
-        asserJsonByName(response, "browser", browser);
-        asserJsonByName(response, "device", device);
+        Assertions.assertJsonByName(response, "platform", platform);
+        Assertions.assertJsonByName(response, "browser", browser);
+        Assertions.assertJsonByName(response, "device", device);
     }
 
     static Stream<Arguments> userAgentValues() {
