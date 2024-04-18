@@ -7,6 +7,7 @@ import lib.BaseTestCase;
 import lib.DataGenerator;
 import org.junit.jupiter.api.Test;
 
+import javax.xml.crypto.Data;
 import java.util.HashMap;
 import java.util.Map;
 
@@ -17,10 +18,7 @@ public class UserRegisterTest extends BaseTestCase {
 
         Map<String, String> userData = new HashMap<>();
         userData.put("email", email);
-        userData.put("password", "123");
-        userData.put("username", "learnqa");
-        userData.put("firstName", "learnqa");
-        userData.put("lastName", "learnqa");
+        userData = DataGenerator.getRegistrationData(userData);
 
         Response response = RestAssured
                 .given()
@@ -34,14 +32,7 @@ public class UserRegisterTest extends BaseTestCase {
 
     @Test
     public void testCreateUserSuccessfully(){
-        String email = DataGenerator.getRandomEmail();
-
-        Map<String, String> userData = new HashMap<>();
-        userData.put("email", email);
-        userData.put("password", "123");
-        userData.put("username", "learnqa");
-        userData.put("firstName", "learnqa");
-        userData.put("lastName", "learnqa");
+        Map<String, String> userData = DataGenerator.getRegistrationData();
 
         Response response = RestAssured
                 .given()
