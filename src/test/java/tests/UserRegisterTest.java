@@ -9,6 +9,7 @@ import lib.DataGenerator;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.params.ParameterizedTest;
+import org.junit.jupiter.params.provider.ValueSource;
 
 import javax.xml.crypto.Data;
 import java.util.HashMap;
@@ -68,8 +69,17 @@ public class UserRegisterTest extends BaseTestCase {
 
     @DisplayName("Создание пользователя без указания одного из полей")
     @ParameterizedTest
-    public void createUserWithoutField(){
+    @ValueSource(strings = {"email", "password", "username", "firstName", "lastName"})
+    public void createUserWithoutField(String fieldName){
 
+        Map<String, String> userData = new HashMap<>();
+        userData.put(fieldName, null);
+        userData = DataGenerator.getRegistrationData(userData);
+
+        Response response = apiCoreRequests
+                .makePostRequest("https://playground.learnqa.ru/api/user/", userData);
+
+        Assertions.assertResponseTextEquals(response,"The following required params are missed: " + fieldName);
     }
 
     @Test
