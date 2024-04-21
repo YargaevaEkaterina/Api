@@ -47,4 +47,31 @@ public class UserGetTest extends BaseTestCase {
         Assertions.assertJsonHasFields(responseUserData, expectedFields);
     }
 
+    //Ex16: Запрос данных другого пользователя
+    @Test
+    public void testGetUserDetailsAuthAsAnotherUser(){
+        Map<String, String> authData = new HashMap<>();
+        authData.put("email", "vinkotov@example.com");
+        authData.put("password", "1234");
+
+        Response response = RestAssured
+                .given()
+                .body(authData)
+                .post("https://playground.learnqa.ru/api/user/login")
+                .andReturn();
+        String header = this.getHeader(response, "x-csrf-token");
+        String cookie = this.getCookie(response, "auth_sid");
+
+        Response responseUserData = RestAssured
+                .given()
+                .header("x-csrf-token", header)
+                .cookie("auth_sid", cookie)
+                .get("https://playground.learnqa.ru/api/user/96284")
+                .andReturn();
+
+        Assertions.assertJsonByName(responseUserData, "username", "learnqa");
+        Assertions.assertJsonHasNotField(responseUserData, "firstName");
+        Assertions.assertJsonHasNotField(responseUserData, "lastName");
+        Assertions.assertJsonHasNotField(responseUserData, "email");
+    }
 }
